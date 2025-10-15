@@ -8,528 +8,580 @@
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
   <div id="root"></div>
   
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
-    const { Menu, X, Github, Linkedin, Mail, ExternalLink, Dribbble, ChevronDown } = lucide;
-
-    // PASTE THE ENTIRE REACT COMPONENT CODE HERE (from the artifact)
-    import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, Github, Linkedin, Mail, ExternalLink, Dribbble, ChevronDown } from 'lucide-react';
-
-export default function Portfolio() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [bubbles, setBubbles] = useState([]);
-  const heroRef = useRef(null);
-  const animationRef = useRef(null);
-
-  useEffect(() => {
-    setTimeout(() => setIsLoaded(true), 100);
     
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    
-    // Initialize bubbles with physics properties
-    const initialBubbles = Array.from({ length: 15 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      vx: (Math.random() - 0.5) * 0.05,
-      vy: (Math.random() - 0.5) * 0.05,
-      size: 120 + Math.random() * 250,
-      scaleX: 0.85 + Math.random() * 0.3,
-      scaleY: 0.85 + Math.random() * 0.3,
-      rotation: Math.random() * 360,
-    }));
-    setBubbles(initialBubbles);
-    
-    // Smooth animation loop
-    const animate = () => {
-      setBubbles(prev => prev.map(bubble => {
-        let newX = bubble.x + bubble.vx;
-        let newY = bubble.y + bubble.vy;
-        let newVx = bubble.vx;
-        let newVy = bubble.vy;
-        
-        // Bounce off edges with damping
-        if (newX < -5 || newX > 105) {
-          newVx = -bubble.vx * 0.8;
-          newX = newX < -5 ? -5 : 105;
-        }
-        if (newY < -5 || newY > 105) {
-          newVy = -bubble.vy * 0.8;
-          newY = newY < -5 ? -5 : 105;
-        }
-        
-        // Add subtle drift
-        newVx += (Math.random() - 0.5) * 0.001;
-        newVy += (Math.random() - 0.5) * 0.001;
-        
-        // Limit velocity
-        const speed = Math.sqrt(newVx * newVx + newVy * newVy);
-        if (speed > 0.15) {
-          newVx = (newVx / speed) * 0.15;
-          newVy = (newVy / speed) * 0.15;
-        }
-        
-        return {
-          ...bubble,
-          x: newX,
-          y: newY,
-          vx: newVx,
-          vy: newVy,
-        };
-      }));
-      
-      animationRef.current = requestAnimationFrame(animate);
-    };
-    
-    animationRef.current = requestAnimationFrame(animate);
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (heroRef.current) {
-        const rect = heroRef.current.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-        setMousePos({ x, y });
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  useEffect(() => {
-    setBubbles(prevBubbles =>
-      prevBubbles.map(bubble => {
-        const dx = mousePos.x - bubble.x;
-        const dy = mousePos.y - bubble.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        const repelRadius = 15;
-        
-        if (distance < repelRadius && distance > 0) {
-          const force = Math.pow((repelRadius - distance) / repelRadius, 2);
-          const pushX = -(dx / distance) * force * 0.8;
-          const pushY = -(dy / distance) * force * 0.8;
-          
-          return {
-            ...bubble,
-            vx: bubble.vx + pushX,
-            vy: bubble.vy + pushY,
-          };
-        }
-        
-        return bubble;
-      })
+    // Lucide icons as React components
+    const Menu = ({ size = 24, className = '' }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
     );
-  }, [mousePos]);
+    
+    const X = ({ size = 24, className = '' }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    );
+    
+    const Github = ({ size = 32, className = '' }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+      </svg>
+    );
+    
+    const Linkedin = ({ size = 32, className = '' }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+        <rect x="2" y="9" width="4" height="12"></rect>
+        <circle cx="4" cy="4" r="2"></circle>
+      </svg>
+    );
+    
+    const Mail = ({ size = 32, className = '' }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+        <polyline points="22,6 12,13 2,6"></polyline>
+      </svg>
+    );
+    
+    const Dribbble = ({ size = 32, className = '' }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.51m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"></path>
+      </svg>
+    );
+    
+    const ExternalLink = ({ size = 18, className = '' }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <line x1="10" y1="14" x2="21" y2="3"></line>
+      </svg>
+    );
+    
+    const ChevronDown = ({ size = 20, className = '' }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    );
 
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    element?.scrollIntoView({ behavior: 'smooth' });
-    setIsMenuOpen(false);
-  };
+    function Portfolio() {
+      const [isMenuOpen, setIsMenuOpen] = useState(false);
+      const [isLoaded, setIsLoaded] = useState(false);
+      const [scrollY, setScrollY] = useState(0);
+      const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+      const [bubbles, setBubbles] = useState([]);
+      const heroRef = useRef(null);
+      const animationRef = useRef(null);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
-      {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-700 ${
-        scrollY > 50 ? 'bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm' : 'bg-transparent'
-      }`}>
-        <div className="max-w-7xl mx-auto px-6 py-5">
-          <div className="flex justify-between items-center">
-            <div className={`text-xl font-light tracking-widest transition-all duration-700 ${
-              isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-            }`}>
-              <span className="text-gray-800">SH</span>
-            </div>
+      useEffect(() => {
+        setTimeout(() => setIsLoaded(true), 100);
+        
+        const handleScroll = () => setScrollY(window.scrollY);
+        window.addEventListener('scroll', handleScroll);
+        
+        // Initialize bubbles with physics properties
+        const initialBubbles = Array.from({ length: 15 }, (_, i) => ({
+          id: i,
+          x: Math.random() * 100,
+          y: Math.random() * 100,
+          vx: (Math.random() - 0.5) * 0.05,
+          vy: (Math.random() - 0.5) * 0.05,
+          size: 120 + Math.random() * 250,
+          scaleX: 0.85 + Math.random() * 0.3,
+          scaleY: 0.85 + Math.random() * 0.3,
+          rotation: Math.random() * 360,
+        }));
+        setBubbles(initialBubbles);
+        
+        // Smooth animation loop
+        const animate = () => {
+          setBubbles(prev => prev.map(bubble => {
+            let newX = bubble.x + bubble.vx;
+            let newY = bubble.y + bubble.vy;
+            let newVx = bubble.vx;
+            let newVy = bubble.vy;
             
-            {/* Desktop Menu */}
-            <div className="hidden md:flex space-x-10">
-              {['about', 'projects', 'experience', 'contact'].map((item, idx) => (
-                <button
-                  key={item}
-                  onClick={() => scrollToSection(item)}
-                  className={`text-sm uppercase tracking-wider text-gray-600 hover:text-gray-900 transition-all duration-700 ${
-                    isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-                  }`}
-                  style={{ transitionDelay: `${(idx + 1) * 100}ms` }}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden text-gray-800"
-            >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-
-          {/* Mobile Menu */}
-          {isMenuOpen && (
-            <div className="md:hidden mt-6 space-y-4 pb-4">
-              {['about', 'projects', 'experience', 'contact'].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => scrollToSection(item)}
-                  className="block w-full text-left py-2 text-sm uppercase tracking-wider text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </nav>
-
-      {/* Hero Section - Interactive Bubbles */}
-      <section 
-        ref={heroRef}
-        id="home" 
-        className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden"
-      >
-        {/* Main Content */}
-        <div className="relative text-center max-w-7xl">
-          <div className={`transition-all duration-1000 delay-200 ${
-            isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-          }`}>
-            <h1 className="text-8xl md:text-[10rem] lg:text-[14rem] xl:text-[16rem] font-bold mb-8 leading-none tracking-tighter">
-              <span className="block text-gray-900">SHERRY</span>
-              <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                HUANG
-              </span>
-            </h1>
-          </div>
+            // Bounce off edges with damping
+            if (newX < -5 || newX > 105) {
+              newVx = -bubble.vx * 0.8;
+              newX = newX < -5 ? -5 : 105;
+            }
+            if (newY < -5 || newY > 105) {
+              newVy = -bubble.vy * 0.8;
+              newY = newY < -5 ? -5 : 105;
+            }
+            
+            // Add subtle drift
+            newVx += (Math.random() - 0.5) * 0.001;
+            newVy += (Math.random() - 0.5) * 0.001;
+            
+            // Limit velocity
+            const speed = Math.sqrt(newVx * newVx + newVy * newVy);
+            if (speed > 0.15) {
+              newVx = (newVx / speed) * 0.15;
+              newVy = (newVy / speed) * 0.15;
+            }
+            
+            return {
+              ...bubble,
+              x: newX,
+              y: newY,
+              vx: newVx,
+              vy: newVy,
+            };
+          }));
           
-          <div className={`transition-all duration-1000 delay-500 ${
-            isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+          animationRef.current = requestAnimationFrame(animate);
+        };
+        
+        animationRef.current = requestAnimationFrame(animate);
+        
+        return () => {
+          window.removeEventListener('scroll', handleScroll);
+          if (animationRef.current) {
+            cancelAnimationFrame(animationRef.current);
+          }
+        };
+      }, []);
+
+      useEffect(() => {
+        const handleMouseMove = (e) => {
+          if (heroRef.current) {
+            const rect = heroRef.current.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            setMousePos({ x, y });
+          }
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+      }, []);
+
+      useEffect(() => {
+        setBubbles(prevBubbles =>
+          prevBubbles.map(bubble => {
+            const dx = mousePos.x - bubble.x;
+            const dy = mousePos.y - bubble.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const repelRadius = 15;
+            
+            if (distance < repelRadius && distance > 0) {
+              const force = Math.pow((repelRadius - distance) / repelRadius, 2);
+              const pushX = -(dx / distance) * force * 0.8;
+              const pushY = -(dy / distance) * force * 0.8;
+              
+              return {
+                ...bubble,
+                vx: bubble.vx + pushX,
+                vy: bubble.vy + pushY,
+              };
+            }
+            
+            return bubble;
+          })
+        );
+      }, [mousePos]);
+
+      const scrollToSection = (id) => {
+        const element = document.getElementById(id);
+        element?.scrollIntoView({ behavior: 'smooth' });
+        setIsMenuOpen(false);
+      };
+
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+          {/* Navigation */}
+          <nav className={`fixed w-full z-50 transition-all duration-700 ${
+            scrollY > 50 ? 'bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm' : 'bg-transparent'
           }`}>
-            <p className="text-2xl md:text-4xl lg:text-5xl text-gray-700 font-light tracking-[0.3em] uppercase">
-              Graphic Designer
-            </p>
-          </div>
-        </div>
+            <div className="max-w-7xl mx-auto px-6 py-5">
+              <div className="flex justify-between items-center">
+                <div className={`text-xl font-light tracking-widest transition-all duration-700 ${
+                  isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+                }`}>
+                  <span className="text-gray-800">SH</span>
+                </div>
+                
+                {/* Desktop Menu */}
+                <div className="hidden md:flex space-x-10">
+                  {['about', 'projects', 'experience', 'contact'].map((item, idx) => (
+                    <button
+                      key={item}
+                      onClick={() => scrollToSection(item)}
+                      className={`text-sm uppercase tracking-wider text-gray-600 hover:text-gray-900 transition-all duration-700 ${
+                        isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+                      }`}
+                      style={{ transitionDelay: `${(idx + 1) * 100}ms` }}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
 
-        {/* Interactive Realistic Bubbles - Over Text */}
-        {bubbles.map((bubble) => (
-          <div
-            key={bubble.id}
-            className="absolute pointer-events-none z-20"
-            style={{
-              left: `${bubble.x}%`,
-              top: `${bubble.y}%`,
-              width: `${bubble.size}px`,
-              height: `${bubble.size}px`,
-              transform: `translate(-50%, -50%) scale(${bubble.scaleX}, ${bubble.scaleY}) rotate(${bubble.rotation}deg)`,
-              transition: 'none',
-            }}
-          >
-            <div 
-              className="w-full h-full rounded-full relative"
-              style={{
-                background: `
-                  radial-gradient(circle at 30% 25%, 
-                    rgba(255, 255, 255, 0.4) 0%,
-                    rgba(255, 250, 255, 0.25) 15%,
-                    rgba(250, 250, 255, 0.2) 30%,
-                    rgba(255, 255, 250, 0.15) 50%,
-                    rgba(250, 255, 255, 0.1) 70%,
-                    transparent 100%
-                  )
-                `,
-                boxShadow: `
-                  0 0 0 1.5px rgba(255, 255, 255, 0.3),
-                  inset -5px -5px 20px rgba(200, 220, 255, 0.2),
-                  inset 5px 5px 20px rgba(255, 220, 240, 0.2),
-                  0 8px 32px rgba(200, 220, 255, 0.15)
-                `,
-                backdropFilter: 'blur(2px)',
-                filter: 'drop-shadow(0 4px 16px rgba(200, 220, 255, 0.12))',
-              }}
-            >
-              {/* Pastel rainbow gradient - diagonal sweep */}
-              <div 
-                className="absolute inset-0 rounded-full opacity-60"
-                style={{
-                  background: `
-                    linear-gradient(135deg,
-                      rgba(255, 200, 230, 0.35) 0%,
-                      rgba(230, 210, 255, 0.35) 15%,
-                      rgba(200, 230, 255, 0.4) 30%,
-                      rgba(200, 255, 240, 0.35) 45%,
-                      rgba(240, 255, 200, 0.35) 60%,
-                      rgba(255, 240, 210, 0.35) 75%,
-                      rgba(255, 220, 230, 0.35) 90%
-                    )
-                  `,
-                }}
-              />
-              
-              {/* Rotating iridescent layer */}
-              <div 
-                className="absolute inset-0 rounded-full opacity-40"
-                style={{
-                  background: `
-                    conic-gradient(from 45deg at 50% 50%,
-                      rgba(255, 210, 240, 0.3) 0deg,
-                      rgba(220, 220, 255, 0.3) 60deg,
-                      rgba(210, 255, 240, 0.3) 120deg,
-                      rgba(240, 255, 210, 0.3) 180deg,
-                      rgba(255, 240, 210, 0.3) 240deg,
-                      rgba(255, 220, 230, 0.3) 300deg,
-                      rgba(255, 210, 240, 0.3) 360deg
-                    )
-                  `,
-                  mixBlendMode: 'overlay',
-                }}
-              />
-              
-              {/* Bright white highlight */}
-              <div 
-                className="absolute rounded-full"
-                style={{
-                  top: '12%',
-                  left: '18%',
-                  width: '40%',
-                  height: '40%',
-                  background: 'radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 40%, transparent 70%)',
-                  filter: 'blur(10px)',
-                }}
-              />
-              
-              {/* Secondary highlight */}
-              <div 
-                className="absolute rounded-full"
-                style={{
-                  top: '18%',
-                  left: '28%',
-                  width: '20%',
-                  height: '20%',
-                  background: 'radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.3) 50%, transparent 70%)',
-                  filter: 'blur(4px)',
-                }}
-              />
-              
-              {/* Bottom colored reflection */}
-              <div 
-                className="absolute rounded-full"
-                style={{
-                  bottom: '12%',
-                  right: '18%',
-                  width: '45%',
-                  height: '45%',
-                  background: `
-                    radial-gradient(circle,
-                      rgba(200, 220, 255, 0.25) 0%,
-                      rgba(220, 200, 255, 0.2) 30%,
-                      rgba(255, 220, 240, 0.15) 50%,
-                      transparent 70%
-                    )
-                  `,
-                  filter: 'blur(12px)',
-                }}
-              />
+                {/* Mobile Menu Button */}
+                <button
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  className="md:hidden text-gray-800"
+                >
+                  {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+              </div>
+
+              {/* Mobile Menu */}
+              {isMenuOpen && (
+                <div className="md:hidden mt-6 space-y-4 pb-4">
+                  {['about', 'projects', 'experience', 'contact'].map((item) => (
+                    <button
+                      key={item}
+                      onClick={() => scrollToSection(item)}
+                      className="block w-full text-left py-2 text-sm uppercase tracking-wider text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          </nav>
 
-        {/* Scroll Indicator */}
-        <div className={`absolute bottom-10 left-1/2 -translate-x-1/2 transition-all duration-1000 delay-1000 ${
-          isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
-          <button 
-            onClick={() => scrollToSection('about')}
-            className="flex flex-col items-center gap-2 text-gray-400 hover:text-gray-600 transition-colors animate-bounce"
+          {/* Hero Section - Interactive Bubbles */}
+          <section 
+            ref={heroRef}
+            id="home" 
+            className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden"
           >
-            <span className="text-xs uppercase tracking-widest">Scroll</span>
-            <ChevronDown size={20} />
-          </button>
-        </div>
-      </section>
+            {/* Main Content */}
+            <div className="relative text-center max-w-7xl">
+              <div className={`transition-all duration-1000 delay-200 ${
+                isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+              }`}>
+                <h1 className="text-8xl md:text-[10rem] lg:text-[14rem] xl:text-[16rem] font-bold mb-8 leading-none tracking-tighter">
+                  <span className="block text-gray-900">SHERRY</span>
+                  <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    HUANG
+                  </span>
+                </h1>
+              </div>
+              
+              <div className={`transition-all duration-1000 delay-500 ${
+                isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+              }`}>
+                <p className="text-2xl md:text-4xl lg:text-5xl text-gray-700 font-light tracking-[0.3em] uppercase">
+                  Graphic Designer
+                </p>
+              </div>
+            </div>
 
-      {/* About Section */}
-      <section id="about" className="min-h-screen flex items-center justify-center px-6 py-32">
-        <div className="max-w-5xl">
-          <h2 className="text-6xl md:text-7xl font-bold mb-16 text-gray-900">About Me</h2>
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-12 border border-gray-200/50 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
-            <p className="text-xl md:text-2xl text-gray-700 mb-8 font-light leading-relaxed">
-              I'm a graphic designer who believes that great design is invisible—it simply works. 
-              With a keen eye for detail and a passion for clean aesthetics, I create visual 
-              solutions that communicate clearly and beautifully.
-            </p>
-            <p className="text-xl md:text-2xl text-gray-700 mb-8 font-light leading-relaxed">
-              My design philosophy centers around simplicity, functionality, and user experience. 
-              I specialize in branding, digital design, and creating cohesive visual identities 
-              that resonate with audiences.
-            </p>
-            <p className="text-xl md:text-2xl text-gray-700 font-light leading-relaxed">
-              Whether working on a brand identity, digital interface, or print collateral, 
-              I approach each project with fresh perspective and creative problem-solving.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Projects Section */}
-      <section id="projects" className="min-h-screen flex items-center justify-center px-6 py-32">
-        <div className="max-w-7xl w-full">
-          <h2 className="text-6xl md:text-7xl font-bold mb-20 text-gray-900">Selected Work</h2>
-          <div className="grid md:grid-cols-2 gap-10">
-            {[
-              {
-                title: 'Brand Identity Design',
-                description: 'Complete visual identity system including logo, color palette, and brand guidelines for a sustainable fashion startup.',
-                category: 'Branding',
-                color: 'from-blue-400 to-purple-400'
-              },
-              {
-                title: 'Editorial Layout',
-                description: 'Magazine spread design focusing on typography and visual hierarchy for a contemporary art publication.',
-                category: 'Print Design',
-                color: 'from-purple-400 to-pink-400'
-              },
-              {
-                title: 'UI/UX Design',
-                description: 'Mobile app interface design with emphasis on user flow and intuitive interaction patterns.',
-                category: 'Digital Design',
-                color: 'from-pink-400 to-red-400'
-              },
-              {
-                title: 'Packaging Design',
-                description: 'Minimalist packaging concept for organic skincare line with sustainable materials.',
-                category: 'Package Design',
-                color: 'from-green-400 to-blue-400'
-              }
-            ].map((project, idx) => (
+            {/* Interactive Realistic Bubbles - Over Text */}
+            {bubbles.map((bubble) => (
               <div
-                key={idx}
-                className="group relative bg-white/80 backdrop-blur-xl rounded-3xl overflow-hidden border border-gray-200/50 hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]"
+                key={bubble.id}
+                className="absolute pointer-events-none z-20"
+                style={{
+                  left: `${bubble.x}%`,
+                  top: `${bubble.y}%`,
+                  width: `${bubble.size}px`,
+                  height: `${bubble.size}px`,
+                  transform: `translate(-50%, -50%) scale(${bubble.scaleX}, ${bubble.scaleY}) rotate(${bubble.rotation}deg)`,
+                  transition: 'none',
+                }}
               >
-                <div className={`h-80 bg-gradient-to-br ${project.color} flex items-center justify-center relative overflow-hidden`}>
-                  <div className="absolute inset-0 bg-white/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                  <span className="relative z-10 text-white text-lg font-light tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-all duration-500">View Project</span>
-                </div>
-                <div className="p-8">
-                  <div className="text-sm text-gray-500 mb-3 font-light tracking-wider uppercase">{project.category}</div>
-                  <h3 className="text-3xl font-bold mb-4 text-gray-900">{project.title}</h3>
-                  <p className="text-gray-600 mb-6 font-light leading-relaxed text-lg">{project.description}</p>
-                  <button className="flex items-center text-gray-900 hover:text-gray-600 transition-colors font-light group">
-                    <span className="mr-2">Explore</span>
-                    <ExternalLink size={18} className="group-hover:translate-x-1 transition-transform" />
-                  </button>
+                <div 
+                  className="w-full h-full rounded-full relative"
+                  style={{
+                    background: `
+                      radial-gradient(circle at 30% 25%, 
+                        rgba(255, 255, 255, 0.4) 0%,
+                        rgba(255, 250, 255, 0.25) 15%,
+                        rgba(250, 250, 255, 0.2) 30%,
+                        rgba(255, 255, 250, 0.15) 50%,
+                        rgba(250, 255, 255, 0.1) 70%,
+                        transparent 100%
+                      )
+                    `,
+                    boxShadow: `
+                      0 0 0 1.5px rgba(255, 255, 255, 0.3),
+                      inset -5px -5px 20px rgba(200, 220, 255, 0.2),
+                      inset 5px 5px 20px rgba(255, 220, 240, 0.2),
+                      0 8px 32px rgba(200, 220, 255, 0.15)
+                    `,
+                    backdropFilter: 'blur(2px)',
+                    filter: 'drop-shadow(0 4px 16px rgba(200, 220, 255, 0.12))',
+                  }}
+                >
+                  {/* Pastel rainbow gradient - diagonal sweep */}
+                  <div 
+                    className="absolute inset-0 rounded-full opacity-60"
+                    style={{
+                      background: `
+                        linear-gradient(135deg,
+                          rgba(255, 200, 230, 0.35) 0%,
+                          rgba(230, 210, 255, 0.35) 15%,
+                          rgba(200, 230, 255, 0.4) 30%,
+                          rgba(200, 255, 240, 0.35) 45%,
+                          rgba(240, 255, 200, 0.35) 60%,
+                          rgba(255, 240, 210, 0.35) 75%,
+                          rgba(255, 220, 230, 0.35) 90%
+                        )
+                      `,
+                    }}
+                  />
+                  
+                  {/* Rotating iridescent layer */}
+                  <div 
+                    className="absolute inset-0 rounded-full opacity-40"
+                    style={{
+                      background: `
+                        conic-gradient(from 45deg at 50% 50%,
+                          rgba(255, 210, 240, 0.3) 0deg,
+                          rgba(220, 220, 255, 0.3) 60deg,
+                          rgba(210, 255, 240, 0.3) 120deg,
+                          rgba(240, 255, 210, 0.3) 180deg,
+                          rgba(255, 240, 210, 0.3) 240deg,
+                          rgba(255, 220, 230, 0.3) 300deg,
+                          rgba(255, 210, 240, 0.3) 360deg
+                        )
+                      `,
+                      mixBlendMode: 'overlay',
+                    }}
+                  />
+                  
+                  {/* Bright white highlight */}
+                  <div 
+                    className="absolute rounded-full"
+                    style={{
+                      top: '12%',
+                      left: '18%',
+                      width: '40%',
+                      height: '40%',
+                      background: 'radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 40%, transparent 70%)',
+                      filter: 'blur(10px)',
+                    }}
+                  />
+                  
+                  {/* Secondary highlight */}
+                  <div 
+                    className="absolute rounded-full"
+                    style={{
+                      top: '18%',
+                      left: '28%',
+                      width: '20%',
+                      height: '20%',
+                      background: 'radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.3) 50%, transparent 70%)',
+                      filter: 'blur(4px)',
+                    }}
+                  />
+                  
+                  {/* Bottom colored reflection */}
+                  <div 
+                    className="absolute rounded-full"
+                    style={{
+                      bottom: '12%',
+                      right: '18%',
+                      width: '45%',
+                      height: '45%',
+                      background: `
+                        radial-gradient(circle,
+                          rgba(200, 220, 255, 0.25) 0%,
+                          rgba(220, 200, 255, 0.2) 30%,
+                          rgba(255, 220, 240, 0.15) 50%,
+                          transparent 70%
+                        )
+                      `,
+                      filter: 'blur(12px)',
+                    }}
+                  />
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Experience Section */}
-      <section id="experience" className="min-h-screen flex items-center justify-center px-6 py-32">
-        <div className="max-w-5xl w-full">
-          <h2 className="text-6xl md:text-7xl font-bold mb-20 text-gray-900">Experience</h2>
-          <div className="space-y-8">
-            {[
-              {
-                role: 'Senior Graphic Designer',
-                company: 'Creative Studio',
-                period: '2022 - Present',
-                description: 'Lead designer for brand identity projects and digital campaigns. Collaborate with cross-functional teams to deliver cohesive visual solutions.'
-              },
-              {
-                role: 'Graphic Designer',
-                company: 'Design Agency',
-                period: '2020 - 2022',
-                description: 'Worked on diverse projects including branding, print collateral, and digital assets. Developed design systems for multiple clients.'
-              },
-              {
-                role: 'Junior Designer',
-                company: 'Marketing Firm',
-                period: '2018 - 2020',
-                description: 'Created marketing materials, social media graphics, and assisted in brand development for various clients across industries.'
-              }
-            ].map((job, idx) => (
-              <div
-                key={idx}
-                className="group bg-white/80 backdrop-blur-xl rounded-3xl p-10 border border-gray-200/50 hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]"
+            {/* Scroll Indicator */}
+            <div className={`absolute bottom-10 left-1/2 -translate-x-1/2 transition-all duration-1000 delay-1000 ${
+              isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}>
+              <button 
+                onClick={() => scrollToSection('about')}
+                className="flex flex-col items-center gap-2 text-gray-400 hover:text-gray-600 transition-colors animate-bounce"
               >
-                <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-6">
-                  <div>
-                    <h3 className="text-3xl font-bold text-gray-900 mb-2">{job.role}</h3>
-                    <p className="text-xl text-gray-600 font-light">{job.company}</p>
+                <span className="text-xs uppercase tracking-widest">Scroll</span>
+                <ChevronDown size={20} />
+              </button>
+            </div>
+          </section>
+
+          {/* About Section */}
+          <section id="about" className="min-h-screen flex items-center justify-center px-6 py-32">
+            <div className="max-w-5xl">
+              <h2 className="text-6xl md:text-7xl font-bold mb-16 text-gray-900">About Me</h2>
+              <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-12 border border-gray-200/50 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
+                <p className="text-xl md:text-2xl text-gray-700 mb-8 font-light leading-relaxed">
+                  I'm a graphic designer who believes that great design is invisible—it simply works. 
+                  With a keen eye for detail and a passion for clean aesthetics, I create visual 
+                  solutions that communicate clearly and beautifully.
+                </p>
+                <p className="text-xl md:text-2xl text-gray-700 mb-8 font-light leading-relaxed">
+                  My design philosophy centers around simplicity, functionality, and user experience. 
+                  I specialize in branding, digital design, and creating cohesive visual identities 
+                  that resonate with audiences.
+                </p>
+                <p className="text-xl md:text-2xl text-gray-700 font-light leading-relaxed">
+                  Whether working on a brand identity, digital interface, or print collateral, 
+                  I approach each project with fresh perspective and creative problem-solving.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* Projects Section */}
+          <section id="projects" className="min-h-screen flex items-center justify-center px-6 py-32">
+            <div className="max-w-7xl w-full">
+              <h2 className="text-6xl md:text-7xl font-bold mb-20 text-gray-900">Selected Work</h2>
+              <div className="grid md:grid-cols-2 gap-10">
+                {[
+                  {
+                    title: 'Brand Identity Design',
+                    description: 'Complete visual identity system including logo, color palette, and brand guidelines for a sustainable fashion startup.',
+                    category: 'Branding',
+                    color: 'from-blue-400 to-purple-400'
+                  },
+                  {
+                    title: 'Editorial Layout',
+                    description: 'Magazine spread design focusing on typography and visual hierarchy for a contemporary art publication.',
+                    category: 'Print Design',
+                    color: 'from-purple-400 to-pink-400'
+                  },
+                  {
+                    title: 'UI/UX Design',
+                    description: 'Mobile app interface design with emphasis on user flow and intuitive interaction patterns.',
+                    category: 'Digital Design',
+                    color: 'from-pink-400 to-red-400'
+                  },
+                  {
+                    title: 'Packaging Design',
+                    description: 'Minimalist packaging concept for organic skincare line with sustainable materials.',
+                    category: 'Package Design',
+                    color: 'from-green-400 to-blue-400'
+                  }
+                ].map((project, idx) => (
+                  <div
+                    key={idx}
+                    className="group relative bg-white/80 backdrop-blur-xl rounded-3xl overflow-hidden border border-gray-200/50 hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]"
+                  >
+                    <div className={`h-80 bg-gradient-to-br ${project.color} flex items-center justify-center relative overflow-hidden`}>
+                      <div className="absolute inset-0 bg-white/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                      <span className="relative z-10 text-white text-lg font-light tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-all duration-500">View Project</span>
+                    </div>
+                    <div className="p-8">
+                      <div className="text-sm text-gray-500 mb-3 font-light tracking-wider uppercase">{project.category}</div>
+                      <h3 className="text-3xl font-bold mb-4 text-gray-900">{project.title}</h3>
+                      <p className="text-gray-600 mb-6 font-light leading-relaxed text-lg">{project.description}</p>
+                      <button className="flex items-center text-gray-900 hover:text-gray-600 transition-colors font-light group">
+                        <span className="mr-2">Explore</span>
+                        <ExternalLink size={18} className="group-hover:translate-x-1 transition-transform" />
+                      </button>
+                    </div>
                   </div>
-                  <span className="text-gray-500 font-light tracking-wider mt-2 md:mt-0">{job.period}</span>
-                </div>
-                <p className="text-lg text-gray-600 font-light leading-relaxed">{job.description}</p>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </div>
+          </section>
 
-      {/* Contact Section */}
-      <section id="contact" className="min-h-screen flex items-center justify-center px-6 py-32">
-        <div className="max-w-4xl w-full text-center">
-          <h2 className="text-6xl md:text-7xl font-bold mb-12 text-gray-900">Let's Connect</h2>
-          <p className="text-2xl text-gray-600 mb-16 font-light leading-relaxed">
-            I'm always interested in hearing about new projects and opportunities. 
-            Whether you have a question or just want to say hi, feel free to reach out.
-          </p>
-          <div className="flex justify-center gap-6 mb-16">
-            {[
-              { icon: Github, href: 'https://github.com/yourusername' },
-              { icon: Linkedin, href: 'https://linkedin.com/in/yourusername' },
-              { icon: Dribbble, href: 'https://dribbble.com/yourusername' },
-              { icon: Mail, href: 'mailto:your.email@example.com' }
-            ].map((social, idx) => (
+          {/* Experience Section */}
+          <section id="experience" className="min-h-screen flex items-center justify-center px-6 py-32">
+            <div className="max-w-5xl w-full">
+              <h2 className="text-6xl md:text-7xl font-bold mb-20 text-gray-900">Experience</h2>
+              <div className="space-y-8">
+                {[
+                  {
+                    role: 'Senior Graphic Designer',
+                    company: 'Creative Studio',
+                    period: '2022 - Present',
+                    description: 'Lead designer for brand identity projects and digital campaigns. Collaborate with cross-functional teams to deliver cohesive visual solutions.'
+                  },
+                  {
+                    role: 'Graphic Designer',
+                    company: 'Design Agency',
+                    period: '2020 - 2022',
+                    description: 'Worked on diverse projects including branding, print collateral, and digital assets. Developed design systems for multiple clients.'
+                  },
+                  {
+                    role: 'Junior Designer',
+                    company: 'Marketing Firm',
+                    period: '2018 - 2020',
+                    description: 'Created marketing materials, social media graphics, and assisted in brand development for various clients across industries.'
+                  }
+                ].map((job, idx) => (
+                  <div
+                    key={idx}
+                    className="group bg-white/80 backdrop-blur-xl rounded-3xl p-10 border border-gray-200/50 hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]"
+                  >
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-6">
+                      <div>
+                        <h3 className="text-3xl font-bold text-gray-900 mb-2">{job.role}</h3>
+                        <p className="text-xl text-gray-600 font-light">{job.company}</p>
+                      </div>
+                      <span className="text-gray-500 font-light tracking-wider mt-2 md:mt-0">{job.period}</span>
+                    </div>
+                    <p className="text-lg text-gray-600 font-light leading-relaxed">{job.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Contact Section */}
+          <section id="contact" className="min-h-screen flex items-center justify-center px-6 py-32">
+            <div className="max-w-4xl w-full text-center">
+              <h2 className="text-6xl md:text-7xl font-bold mb-12 text-gray-900">Let's Connect</h2>
+              <p className="text-2xl text-gray-600 mb-16 font-light leading-relaxed">
+                I'm always interested in hearing about new projects and opportunities. 
+                Whether you have a question or just want to say hi, feel free to reach out.
+              </p>
+              <div className="flex justify-center gap-6 mb-16">
+                {[
+                  { icon: Github, href: 'https://github.com/yourusername' },
+                  { icon: Linkedin, href: 'https://linkedin.com/in/yourusername' },
+                  { icon: Dribbble, href: 'https://dribbble.com/yourusername' },
+                  { icon: Mail, href: 'mailto:your.email@example.com' }
+                ].map((social, idx) => (
+                  <a
+                    key={idx}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group bg-white/80 backdrop-blur-xl p-6 rounded-full hover:bg-gray-900 transition-all transform hover:scale-110 border border-gray-200/50 hover:border-gray-900 shadow-xl hover:shadow-2xl"
+                  >
+                    <social.icon size={32} className="text-gray-700 group-hover:text-white transition-colors" />
+                  </a>
+                ))}
+              </div>
               <a
-                key={idx}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-white/80 backdrop-blur-xl p-6 rounded-full hover:bg-gray-900 transition-all transform hover:scale-110 border border-gray-200/50 hover:border-gray-900 shadow-xl hover:shadow-2xl"
+                href="mailto:your.email@example.com"
+                className="inline-block group relative px-12 py-5 bg-gray-900 text-white rounded-full overflow-hidden transition-all hover:scale-105 hover:shadow-2xl"
               >
-                <social.icon size={32} className="text-gray-700 group-hover:text-white transition-colors" />
+                <span className="relative z-10 text-sm uppercase tracking-widest">Send Email</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </a>
-            ))}
-          </div>
-          <a
-            href="mailto:your.email@example.com"
-            className="inline-block group relative px-12 py-5 bg-gray-900 text-white rounded-full overflow-hidden transition-all hover:scale-105 hover:shadow-2xl"
-          >
-            <span className="relative z-10 text-sm uppercase tracking-widest">Send Email</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          </a>
-        </div>
-      </section>
+            </div>
+          </section>
 
-      {/* Footer */}
-      <footer className="bg-white/80 backdrop-blur-xl border-t border-gray-200/50 py-10 text-center text-gray-600">
-        <p className="font-light tracking-wide">© 2025 Sherry Huang. Designed with care.</p>
-      </footer>
-    </div>
-  );
-}
+          {/* Footer */}
+          <footer className="bg-white/80 backdrop-blur-xl border-t border-gray-200/50 py-10 text-center text-gray-600">
+            <p className="font-light tracking-wide">© 2025 Sherry Huang. Designed with care.</p>
+          </footer>
+        </div>
+      );
+    }
     
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<Portfolio />);
